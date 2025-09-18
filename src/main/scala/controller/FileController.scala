@@ -1,18 +1,14 @@
 package controller
 
 
-import scala.io.Source
-import model.Board
-import ui.GamePanel
 
+import model.Board
+import scala.io.Source
 import java.io.{File, PrintWriter}
 import scala.swing.{Component, Dialog, FileChooser, Window}
 
-object LevelLoader {
+object FileController {
 
-  /** Loads a level from a text file where '-' = empty, '#' = mine */
-  import scala.io.Source
-  import java.io.File
 
   def saveGame(parent: Window, board: Board, moves: Int, seconds: Int): Unit = {
     val chooser = new FileChooser(new java.io.File("."))
@@ -98,28 +94,26 @@ object LevelLoader {
 
     (new Board(layout), seconds, moves)
   }
+  def loadScores(): List[(String, Int)] = {
+    val file = new File("highscores.txt")
+    if (!file.exists()) return List()
+    Source.fromFile(file).getLines().flatMap { line =>
+      line.split(",") match {
+        case Array(name, scoreStr) =>
+          try Some((name, scoreStr.toInt))
+          catch { case _: Exception => None }
+        case _ => None
+      }
+    }.toList.sortBy(-_._2) // descending
+  }
 
-//  def loadMovesFromFile(parent: Window, board: Board):Unit = {
-//    val file = loadFile(parent)
-//    val chooser = new FileChooser(new java.io.File("."))
-//    chooser.title = "Select a Moves File"
-//
-//    if (chooser.showOpenDialog(gamePanel) == FileChooser.Result.Approve) {
-//      val file = chooser.selectedFile
-//      try {
-//        println("Loaded moves at " +  file.getAbsolutePath)
-//        playMovesFromFile(file, board)
-//      } catch {
-//        case ex: Exception =>
-//          Dialog.showMessage(
-//            parent = this,
-//            message = s"Failed to load moves: ${ex.getMessage}",
-//            title = "Error",
-//            messageType = Dialog.Message.Error
-//          )
-//      }
-//    }
-//  }
+  /** Save a new score */
+  def saveScore(name: String, score: Int): Unit = {
+    val file = new java.io.File("highscores.txt")
+    val writer = new java.io.FileWriter(file, true) // `true` for append mode
+    writer.write(s"$name,$score\n")
+    writer.close()
+  }
 
 
 

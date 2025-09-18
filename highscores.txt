@@ -1,0 +1,4 @@
+Gas,1000
+gasfasfsa,1000
+Player,1000
+Nikola,999

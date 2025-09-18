@@ -1,6 +1,6 @@
 package ui
 
-import controller.LevelLoader
+import controller.FileController
 
 import scala.swing._
 import scala.swing.event._
@@ -17,9 +17,9 @@ class MenuPanel(frame: MainFrameUI) extends BoxPanel(Orientation.Vertical) {
   contents += Swing.VStrut(40)
   contents += makeMenuButton("Load Level/Load Saved Game", () => frame.loadLevel())
   contents += Swing.VStrut(40)
-  contents += makeMenuButton("Create Level", () => println("TODO: Create"))
+  contents += makeMenuButton("Create Level", () => frame.createLevel())
   contents += Swing.VStrut(40)
-  contents += makeMenuButton("Highscores", () => println("TODO: Highscores"))
+  contents += makeMenuButton("Highscores", () => frame.openHighscores())
   contents.foreach {
     case comp: Component => comp.xLayoutAlignment = 0.5
     case _ =>

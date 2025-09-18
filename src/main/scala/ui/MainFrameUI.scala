@@ -1,7 +1,7 @@
 package ui
 
 import scala.swing._
-import controller.LevelLoader
+import controller.FileController
 import model.Board
 
 import java.io.File
@@ -25,7 +25,7 @@ class MainFrameUI extends MainFrame {
     repaint()
   }
   def startGame(file: File): Unit = {
-    val (board, seconds, moves) = LevelLoader.loadLevelFromFile(file)
+    val (board, seconds, moves) = FileController.loadLevelFromFile(file)
     gamePanel = new GamePanel(this, board, seconds, moves)
     contents = gamePanel
     pack() // adjust frame size to fit new preferredSize
@@ -40,8 +40,18 @@ class MainFrameUI extends MainFrame {
   }
 
   def loadLevel():Unit = {
-    val file = LevelLoader.loadFile(this)
+    val file = FileController.loadFile(this)
     startGame(file)
   }
+
+  def openHighscores(): Unit = {
+    contents = new HighscorePanel(this)
+  }
+
+  def createLevel(): Unit = {
+    contents = new LevelCreatorPanel(this, new Board(List.fill(10, 10)("-")))
+  }
+
+
 }
 

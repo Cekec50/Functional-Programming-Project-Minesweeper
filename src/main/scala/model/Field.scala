@@ -1,7 +1,9 @@
 package model
 
-import java.awt.Dimension
+import java.awt.{Color, Dimension}
+import javax.swing.BorderFactory
 import scala.swing.Button
+import javax.swing.{Timer => SwingTimer}
 
 class Field(isMine: Boolean ) extends Button{
 
@@ -38,6 +40,23 @@ class Field(isMine: Boolean ) extends Button{
 
   def showNumber(number: Int) = {
     text = number.toString
+  }
+
+  def flashField(flashColor: Color = Color.GREEN): Unit = {
+    val originalBg = background
+    val originalBorder = border
+
+    opaque = true
+    contentAreaFilled = true
+    background = flashColor
+    border = BorderFactory.createLineBorder(Color.BLACK, 2)
+
+    val t = new SwingTimer(1500, _ => {
+      background = originalBg
+      border = originalBorder
+    })
+    t.setRepeats(false)
+    t.start()
   }
 
 }

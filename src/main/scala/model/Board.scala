@@ -14,10 +14,18 @@ class Board(layout: List[List[String]]) extends GridBagPanel {
       layout(r)(c) match {
         case "#" => new Field(true)
         case "-" => new Field(false)
+        case "!" => new Field(true)
+        case "?" =>  new Field(false)
+        case "+" => new Field(false)
         case _ => throw new IllegalArgumentException("Unknown symbol found in file!")
       }
     }
-
+  for (r <- 0 until rows; c <- 0 until cols  if layout(r)(c) == "!" || layout(r)(c) == "?"){
+    fields(r)(c).flagField()
+  }
+  for (r <- 0 until rows; c <- 0 until cols  if layout(r)(c) == "+"){
+    openField(fields(r)(c))
+  }
   // Add buttons to grid
   for (r <- 0 until rows; c <- 0 until cols) {
     val constraints = new Constraints
