@@ -38,11 +38,11 @@ trait Expandable extends Isometry {
 
 
     for (_ <- 0 until rowsToAdd) {
-      layout = layout :+ List.fill(board.cols)("-")
+      layout = layout :+ List.fill(board.cols + colsToAdd)("-")
     }
     // Add columns
     for (_ <- 0 until colsToAdd) {
-      layout = layout.zip(List.fill(board.rows)("-")).map { case (row, v) => row :+ v }
+      layout = layout.zip(List.fill(board.rows + rowsToAdd)("-")).map { case (row, v) => row :+ v }
     }
     val shiftedFields = highlightedFields.map { case ((x, y), v) =>
       ((x + (-minRow).max(0), y + (-minCol).max(0)), v)
