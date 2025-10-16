@@ -70,7 +70,9 @@ class LevelCreatorTest extends AnyFunSuite with BeforeAndAfter{
     val file: File = FileController.saveLevelToFile(board2, "beginner", "test_level_save.txt")
     assert(file.exists(), "Level file should exist")
 
-    val lines = scala.io.Source.fromFile(file).getLines().toList
+
+    val source = scala.io.Source.fromFile(file)
+    val lines  = try source.getLines().toList finally source.close()
     assert(lines.length == board2.rows)
 
     // Check that mines are correctly placed

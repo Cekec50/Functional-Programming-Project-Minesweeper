@@ -3,15 +3,19 @@ package controller
 
 
 import model.Board
+
 import scala.io.Source
-import java.io.{File, PrintWriter}
-import scala.swing.{Component, Dialog, FileChooser, Window}
+import java.io.{File, FileWriter, PrintWriter}
+import scala.swing.{Dialog, FileChooser, Window}
+import scala.util.Using
 
 object FileController {
 
+  private def usingPrintWriter(file: File)(op: PrintWriter => Unit): Unit =
+    Using.resource(new PrintWriter(file))(op)
+
   def saveGameToFile(file: File, board: Board, moves: Int, seconds: Int): Unit = {
-    val writer = new PrintWriter(file)
-    try {
+    usingPrintWriter(file){ writer =>
       for (row <- board.fields) {
         val line = row.map { field =>
           (field.enabled, field.getIsMine, field.getIsFlagged) match {
@@ -26,7 +30,7 @@ object FileController {
       }
       writer.println(s"m:$moves")
       writer.println(s"s:$seconds")
-    } finally writer.close()
+    }
   }
   def saveGame(parent: Window, board: Board, moves: Int, seconds: Int): Unit = {
     val chooser = new FileChooser(new java.io.File("."))
@@ -56,7 +60,6 @@ object FileController {
     var seconds = 0
     var lines = allLines
 
-    // Check if last two lines contain metadata
     if (allLines.length >= 2 &&
       allLines(allLines.length - 2).startsWith("m:") &&
       allLines(allLines.length - 1).startsWith("s:")) {
@@ -106,26 +109,19 @@ object FileController {
 
 
   def saveScore(name: String, score: Int, filename: String): Unit = {
-    val file = new java.io.File(filename)
-    val writer = new java.io.FileWriter(file, true) // `true` for append mode
-    writer.write(s"$name,$score\n")
-    writer.close()
+    Using.resource(new FileWriter(new File(filename), true)) { writer =>
+      writer.write(s"$name,$score\n")
+    }
   }
 
   def saveLevelToFile(board: Board, difficulty: String, filename: String): File = {
-    val dir = new java.io.File(s"levels/$difficulty")
-    if (!dir.exists()) dir.mkdirs()
+    val file = new File(s"levels/$difficulty/$filename.txt")
 
-    val file = new java.io.File(dir, s"$filename.txt")
-    val writer = new java.io.PrintWriter(file)
-
-    try {
+    usingPrintWriter(file) { writer =>
       for (row <- board.fields) {
         val line = row.map(f => if (f.getIsMine) "#" else "-").mkString
         writer.println(line)
       }
-    } finally {
-      writer.close()
     }
     file
   }

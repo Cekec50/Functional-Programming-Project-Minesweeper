@@ -1,5 +1,5 @@
 import controller.{FileController, GameController}
-import model.Board
+import model.{Board, Click}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -21,9 +21,9 @@ class GameplayTest extends AnyFunSuite with BeforeAndAfter {
   // --- Gameplay: Revealing Fields ---
   test("Reveal non-mine field shows correct adjacent count") {
 
-    gameController.playMove("left-click", board, board.fields(0)(0))
-    gameController.playMove("left-click", board, board.fields(2)(2))
-    gameController.playMove("left-click", board, board.fields(5)(0))
+    gameController.playMove(Click.Left, board, board.fields(0)(0))
+    gameController.playMove(Click.Left, board, board.fields(2)(2))
+    gameController.playMove(Click.Left, board, board.fields(5)(0))
 
     assert(board.fields(0)(0).text == "1")
     assert(board.fields(2)(2).text == "8")
@@ -31,13 +31,13 @@ class GameplayTest extends AnyFunSuite with BeforeAndAfter {
 
   }
   test("Reveal mine ends game") {
-    gameController.playMove("left-click", board, board.fields(1)(1)) // click on mine field
+    gameController.playMove(Click.Left, board, board.fields(1)(1)) // click on mine field
     assert(gameController.getGameState) // if true, game over
 
     assert(board.fields(0)(0).enabled)
     assert(board.fields(0)(1).enabled)
-    gameController.playMove("left-click", board, board.fields(0)(0))
-    gameController.playMove("left-click", board, board.fields(0)(1))
+    gameController.playMove(Click.Left, board, board.fields(0)(0))
+    gameController.playMove(Click.Left, board, board.fields(0)(1))
     assert(board.fields(0)(0).enabled)
     assert(board.fields(0)(1).enabled)
   }
@@ -48,7 +48,7 @@ class GameplayTest extends AnyFunSuite with BeforeAndAfter {
     assert(board.fields(5)(0).text == "")
     assert(board.fields(2)(2).text == "")
 
-    gameController.playMove("left-click", board, board.fields(5)(0))
+    gameController.playMove(Click.Left, board, board.fields(5)(0))
 
     assert(board.fields(4)(0).text == "1")
     assert(board.fields(4)(1).text == "2")
@@ -60,12 +60,12 @@ class GameplayTest extends AnyFunSuite with BeforeAndAfter {
     assert(board.fields(2)(2).text == "")
     assert(board.fields(2)(2).enabled)
 
-    gameController.playMove("left-click", board, board.fields(2)(2))
+    gameController.playMove(Click.Left, board, board.fields(2)(2))
 
     assert(board.fields(2)(2).text == "8")
     assert(!board.fields(2)(2).enabled)
 
-    gameController.playMove("left-click", board, board.fields(2)(2))
+    gameController.playMove(Click.Left, board, board.fields(2)(2))
 
     assert(board.fields(2)(2).text == "8")
     assert(!board.fields(2)(2).enabled)
@@ -76,9 +76,9 @@ class GameplayTest extends AnyFunSuite with BeforeAndAfter {
     assert(board.fields(2)(2).text == "")
     assert(board.fields(2)(2).enabled)
 
-    gameController.playMove("right-click", board, board.fields(2)(2))
+    gameController.playMove(Click.Right, board, board.fields(2)(2))
 
-    gameController.playMove("left-click", board, board.fields(2)(2))
+    gameController.playMove(Click.Left, board, board.fields(2)(2))
 
     assert(board.fields(2)(2).text == "F")
     assert(board.fields(2)(2).enabled)
@@ -90,7 +90,7 @@ class GameplayTest extends AnyFunSuite with BeforeAndAfter {
     assert(board.fields(2)(2).text == "")
     assert(board.fields(2)(2).enabled)
 
-    gameController.playMove("right-click", board, board.fields(2)(2))
+    gameController.playMove(Click.Right, board, board.fields(2)(2))
 
     assert(board.fields(2)(2).text == "F")
     assert(board.fields(2)(2).enabled)
@@ -102,18 +102,18 @@ class GameplayTest extends AnyFunSuite with BeforeAndAfter {
     assert(board.fields(2)(2).text == "")
     assert(board.fields(2)(2).enabled)
 
-    gameController.playMove("right-click", board, board.fields(2)(2))
+    gameController.playMove(Click.Right, board, board.fields(2)(2))
 
     assert(board.fields(2)(2).text == "F")
     assert(board.fields(2)(2).enabled)
 
-    gameController.playMove("right-click", board, board.fields(2)(2))
+    gameController.playMove(Click.Right, board, board.fields(2)(2))
 
     assert(board.fields(2)(2).text == "")
     assert(board.fields(2)(2).enabled)
   }
   test("Game victory detected when all non-mines revealed") {
-    gameController.playMove("left-click", board2, board2.fields(0)(0)) //This should win the game
+    gameController.playMove(Click.Left, board2, board2.fields(0)(0)) //This should win the game
 
     assert(gameController.getGameState) // If true, game is over
     assert(!board2.fields.flatten.exists(f => f.enabled)) // All buttons should be disabled

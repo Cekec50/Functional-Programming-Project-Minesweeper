@@ -8,13 +8,12 @@ import scala.util.Random
 class DifficultyChooserPanel(frame: MainFrameUI) extends BorderPanel {
 
   preferredSize = new Dimension(500, 500)
-  // === Title ===
+
   private val title = new Label("Choose Difficulty") {
     font = new Font("Arial", java.awt.Font.BOLD, 20)
     horizontalAlignment = Alignment.Center
   }
 
-  // === Difficulty selection ===
   private val beginner    = new RadioButton("Beginner")
   private val intermediate = new RadioButton("Intermediate")
   private val expert      = new RadioButton("Expert")
@@ -33,13 +32,11 @@ class DifficultyChooserPanel(frame: MainFrameUI) extends BorderPanel {
     contents += new Label("15-20/20-30/50–120")
   }
 
-  // === Level list ===
   private val levelList = new ListView[String](Seq.empty)
   private val scrollPane = new ScrollPane(levelList) {
     preferredSize = new Dimension(200, 150)
   }
 
-  // === Buttons ===
   private val playButton = new Button("Play")
   private val backButton = new Button("Back")
   private val buttonBar = new FlowPanel {
@@ -47,13 +44,11 @@ class DifficultyChooserPanel(frame: MainFrameUI) extends BorderPanel {
     contents += backButton
   }
 
-  // === Layout ===
   layout(title)       = BorderPanel.Position.North
   layout(difficultyBox) = BorderPanel.Position.West
   layout(scrollPane)  = BorderPanel.Position.Center
   layout(buttonBar)   = BorderPanel.Position.South
 
-  // === Event handling ===
   listenTo(beginner, intermediate, expert, playButton, backButton)
 
   reactions += {
@@ -84,7 +79,6 @@ class DifficultyChooserPanel(frame: MainFrameUI) extends BorderPanel {
       frame.showMenu()
   }
 
-  // === Helper: load level list from folder ===
   private def loadLevels(path: String): Unit = {
     val folder = new File(path)
     val files = folder.listFiles().filter(_.isFile).map(_.getName).toSeq.sorted

@@ -1,7 +1,7 @@
 package ui
 
 import controller.{FileController, LevelCreatorController}
-import isometries.{AxialReflection, IsometryFunction, Rotation}
+import isometries.IsometryFunction
 import model.{Board, Field}
 
 import scala.swing._
@@ -11,7 +11,6 @@ import scala.swing.event.{ButtonClicked, MouseClicked}
 class LevelCreatorPanel(frame: MainFrameUI) extends BorderPanel {
   private var board = new Board(List.fill(10, 10)("-"))
 
-  // === Title ===
   private val title = new Label("Level Creator") {
     font = new Font("Arial", java.awt.Font.BOLD, 20)
     horizontalAlignment = Alignment.Center
@@ -47,8 +46,6 @@ class LevelCreatorPanel(frame: MainFrameUI) extends BorderPanel {
   private val reflectionGroup = new ButtonGroup(reflectionRow, reflectionColumn, reflectionMainDiag, reflectionSecondDiag)
 
   var highlightedFields: List[((Int, Int), Boolean)] = Nil
-
-  private def rotate =  Rotation()
 
   private def operationButton(text: String): Button = new Button(text) {
     preferredSize = new Dimension(150, 35)
@@ -104,16 +101,15 @@ class LevelCreatorPanel(frame: MainFrameUI) extends BorderPanel {
     contents += isometryBox
   }
 
-  // === Bottom buttons ===
   private val buttonBar = new FlowPanel {
     contents ++= Seq(saveLevelButton, backButton)
   }
-  private def unhighlighAll={
+  private def unhighlighAll(): Unit ={
     highlightedFields = Nil
     board.fields.flatten.foreach(f => f.unhighlightField())
   }
   private def setNewBoard(newBoard:Board): Unit = {
-    unhighlighAll
+    unhighlighAll()
 
     layout -= board
     deafTo(board.fields.flatten: _*)
@@ -137,12 +133,15 @@ class LevelCreatorPanel(frame: MainFrameUI) extends BorderPanel {
       case "Beginner" => if(board.rows >= 5 && board.rows <= 10 && board.cols >= 5 && board.cols <= 10 &&
         board.countMines() >= 5 && board.countMines() <= 15)
         FileController.saveLevel(frame, board, "beginner")
+      else println(s"Rows: ${board.rows}, Cols: ${board.cols}, Mines: ${board.countMines()}")
       case "Intermediate" => if(board.rows >= 10 && board.rows <= 15 && board.cols >= 10 && board.cols <= 20 &&
         board.countMines() >= 15 && board.countMines() <= 50)
         FileController.saveLevel(frame, board, "intermediate")
+      else println(s"Rows: ${board.rows}, Cols: ${board.cols}, Mines: ${board.countMines()}")
       case "Expert" => if(board.rows >= 15 && board.rows <= 20 && board.cols >= 20 && board.cols <= 30 &&
         board.countMines() >= 50 && board.countMines() <= 120)
         FileController.saveLevel(frame, board, "expert")
+      else println(s"Rows: ${board.rows}, Cols: ${board.cols}, Mines: ${board.countMines()}")
     }
   }
 

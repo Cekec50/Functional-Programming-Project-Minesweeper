@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent
 import scala.swing.event._
 import model.Field
 import model.Board
+import model.Click
 
 class GamePanel(frame:MainFrameUI, board: Board, startSeconds: Int = 0, startMoves: Int = 0) extends BorderPanel {
   private var seconds = startSeconds
@@ -30,7 +31,6 @@ class GamePanel(frame:MainFrameUI, board: Board, startSeconds: Int = 0, startMov
   private val saveButton = new Button("Save")
   private val menuButton = new Button("Menu")
 
-  // === Top bar (score, etc.) ===
   private val topBar = new BoxPanel(Orientation.Horizontal) {
     contents += timeLabel
     contents += Swing.HGlue
@@ -45,36 +45,36 @@ class GamePanel(frame:MainFrameUI, board: Board, startSeconds: Int = 0, startMov
 
 
   // Start and stop methods
-  def startTimer = {
+  private def startTimer(): Unit = {
     timeLabel.text = f"Time: ${seconds / 60}%02d:${seconds % 60}%02d"
     timer.start()
   }
 
-  def stopTimer() = {
+  private def stopTimer(): Unit = {
     timer.stop()
   }
 
-  def makeMove(numberOfMoves: Int = 1)= {
+  def makeMove(numberOfMoves: Int = 1): Unit = {
     moves += numberOfMoves
     movesLabel.text = s"Moves: $moves"
   }
 
-  def disableBoard = {
+  private def disableBoard(): Unit = {
     deafTo(board.fields.flatten: _*)
     deafTo(board.fields.flatten.map(_.mouse.clicks): _*)
   }
-  def gameLost() = {
+  def gameLost(): Unit = {
     println(gameController.getGameState)
     stopTimer()
     board.revealAllMines
-    disableBoard
+    disableBoard()
     Dialog.showMessage(this , "You lost!", "Game over")
   }
 
   def gameWon(): Unit = {
     stopTimer()
     board.flagAllMines
-    disableBoard
+    disableBoard()
     val points = gameController.calculatePoints(seconds, moves)
     val name = Dialog.showInput(
       this,
@@ -88,11 +88,9 @@ class GamePanel(frame:MainFrameUI, board: Board, startSeconds: Int = 0, startMov
     }
   }
 
-  // === Layout ===
   layout(topBar) = BorderPanel.Position.North
   layout(board)  = BorderPanel.Position.Center
 
-  // === Events ===
   listenTo(helpButton,loadMovesButton,saveButton,menuButton)
   listenTo(board.fields.flatten: _*)
   listenTo(board.fields.flatten.map(_.mouse.clicks): _*)
@@ -103,11 +101,11 @@ class GamePanel(frame:MainFrameUI, board: Board, startSeconds: Int = 0, startMov
     case ButtonClicked(`saveButton`) => FileController.saveGame(frame, board, moves, seconds)
     case ButtonClicked(`menuButton`) => frame.showMenu()
     case ButtonClicked(field: Field) =>
-      gameController.playMove("left-click", board, field)
-      if(!timer.isRunning) startTimer
+      gameController.playMove(Click.Left, board, field)
+      if(!timer.isRunning) startTimer()
     case e: MouseClicked if e.peer.getButton == java.awt.event.MouseEvent.BUTTON3 =>
       val field = e.source.asInstanceOf[Field]
-      gameController.playMove("right-click", board, field)
+      gameController.playMove(Click.Right, board, field)
   }
 
 

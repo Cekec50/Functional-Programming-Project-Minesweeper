@@ -1,12 +1,10 @@
 package controller
 
-import model.Board
-import model.Field
-import ui.GamePanel
+import model.{Board, Click, Field}
 
 import java.io.File
 import scala.io.Source
-import scala.swing.{Dialog, Frame, Window}
+import scala.swing.Frame
 
 class GameController(
         gameWon: () => Unit,
@@ -15,32 +13,31 @@ class GameController(
                     ) {
   private var gameOver = false
 
-  def getGameState = gameOver
+  def getGameState: Boolean = gameOver
 
   def changeGameState(): Unit = {
     gameOver = true
   }
-  def playMove(click: String, board: Board, field: Field): Unit = {
+  private def endGame(onEnd: => Unit): Unit = {
+    gameOver = true
+    onEnd
+  }
+  def playMove(click: Click, board: Board, field: Field): Unit = {
     if (!gameOver){
       click match {
-        case "left-click" =>
+        case Click.Left =>
           board.openField(field) match {
-            case Some(true) => // opened a mine
-              gameLost()
-              gameOver = true
-            case Some(false) =>
-              makeMove()
-              checkGameWon(board)
-            case None => () // flagged or already revealed → do nothing
+            case Some(true) => endGame(gameLost()) // Opened a mine
+            case Some(false) => makeMove(); checkGameWon(board)
+            case None => () // Flagged or already revealed - Do nothing
           }
-        case "right-click" =>
+        case Click.Right =>
           field.flagField() match {
             case Some(true) => makeMove()
             case None => ()
           }
       }
     }
-
   }
 
   def suggestMove(board: Board): Field = {
@@ -49,17 +46,19 @@ class GameController(
     unopenedSafe.get
   }
 
-  def checkGameWon(board: Board) = {
+  private def checkGameWon(board: Board): Unit = {
     val gameWonBool = board.fields.flatten.forall(field => field.getIsMine || !field.enabled)
-    if(gameWonBool) {
-      gameWon()
-      gameOver = true
-    }
+    if(gameWonBool) endGame(gameWon())
   }
 
-  def calculatePoints(seconds: Int, moves: Int): Int = {
-    1000 - seconds - moves
+  def calculatePoints(timeSeconds: Int, movesMade: Int): Int = {
+    val K = 10000
+    val seconds = Math.max(timeSeconds, 1)
+    val moves = Math.max(movesMade, 1)
+    val rawPoints = K.toDouble / (seconds * moves)
+    Math.max(rawPoints.round.toInt, 1) // at least 1 point
   }
+
   def playMovesFromFile(frame: Frame, board: Board): Unit = {
     try {
       val file = FileController.loadFile(frame)
@@ -80,11 +79,11 @@ class GameController(
             case 'L' =>
               val (x, y) = parseCoordinates(move)
               if(x < board.rows && y < board.cols && x >= 0 && y >= 0)
-                playMove("left-click", board, board.fields(x)(y))
+                playMove(Click.Left, board, board.fields(x)(y))
             case 'D' =>
               val (x, y) = parseCoordinates(move)
               if(x < board.rows && y < board.cols && x >= 0 && y >= 0)
-                playMove("right-click", board, board.fields(x)(y))
+                playMove(Click.Right, board, board.fields(x)(y))
             case _ =>
               throw new IllegalArgumentException(s"Invalid move format: $move")
           }
