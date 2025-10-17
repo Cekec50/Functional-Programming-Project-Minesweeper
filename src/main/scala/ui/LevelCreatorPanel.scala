@@ -209,7 +209,7 @@ class LevelCreatorPanel(frame: MainFrameUI) extends BorderPanel {
     case ButtonClicked(`clearAreaButton`) =>  setNewBoard(LevelCreatorController.clearArea(board, highlightedFields))
 
     case ButtonClicked(`applyButton`) => isometryGroup.selected.get.text match {
-      case "Rotate" => applyIsometry(IsometryFunction.rotate3.apply)
+      case "Rotate" => applyIsometry(IsometryFunction.rotateExpand.apply)
       case "Axial Reflection" => applyIsometry(IsometryFunction.axialReflection.apply)
       case "Translate" => applyTranslation()
       case "Central Symmetry" => applyIsometry(IsometryFunction.centralSymmetry.apply)

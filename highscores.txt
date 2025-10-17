@@ -8,3 +8,4 @@ lololaooas,595
 Player,919
 Player,999
 moje_ime,979
+djordje,10000

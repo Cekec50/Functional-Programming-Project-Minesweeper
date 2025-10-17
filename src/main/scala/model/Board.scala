@@ -10,7 +10,7 @@ class Board(layout: List[List[String]]) extends GridBagPanel {
   minimumSize = new Dimension(10 * cellSize, 5 * cellSize)
 
   // === Grid of buttons ===
-  var fields: List[List[Field]] =
+  val fields: List[List[Field]] =
     List.tabulate(rows, cols) { (r, c) =>
       layout(r)(c) match {
         case "#" =>   new Field(true)   // MINE FIELD
