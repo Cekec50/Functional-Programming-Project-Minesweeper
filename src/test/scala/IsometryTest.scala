@@ -185,7 +185,7 @@ class IsometryTest extends AnyFunSuite {
   }
 
   // --- Extensibility ---
-7  test("Expanding isometries expands map") {
+    test("Expanding isometries expands map") {
     val file = new File("src/test/resources/test-level-isometry-2.txt")
     val (board, _ , _) = FileController.loadLevelFromFile(file)
     val highlightedFields = List(((0, 9), true), ((0, 8), false), ((1, 9), true), ((1, 8), true))
