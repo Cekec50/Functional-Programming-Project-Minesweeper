@@ -16,7 +16,7 @@ A classic implementation of the Minesweeper game built with Scala and the Swing 
 - **Save & Load Games:** Save your progress at any time and load it back later.
 - **High Score Tracking:** Compete against yourself with a local high score board.
 - **Custom Level Creator:** Design and build your own challenging Minesweeper levels.
-- **Board Isometries:** Apply geometric transformations like rotation and reflection to the game board for a unique challenge.
+- **Board Isometries:** Apply geometric transformations like rotation and reflection to the fields in the custom leavel creator
 
 ## Getting Started
 
