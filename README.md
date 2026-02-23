@@ -1,6 +1,6 @@
 # Scala Minesweeper
 
-A classic implementation of the Minesweeper game built with Scala and the Swing UI toolkit. This project showcases the use of functional programming principles in a desktop application, featuring dynamic board generation, game state management, and custom level creation.
+A classic implementation of the Minesweeper game built entirely in the functional programming paradigm using Scala and the Swing UI toolkit. This project showcases pure functional approaches to state management, UI logic, and data transformation in a desktop application. It features dynamic board generation, game state management, and custom level creation.
 
 ## Tech Stack
 
@@ -16,7 +16,7 @@ A classic implementation of the Minesweeper game built with Scala and the Swing 
 - **Save & Load Games:** Save your progress at any time and load it back later.
 - **High Score Tracking:** Compete against yourself with a local high score board.
 - **Custom Level Creator:** Design and build your own challenging Minesweeper levels.
-- **Board Isometries:** Apply geometric transformations like rotation and reflection to the fields in the custom leavel creator
+- **Board Isometries:** Apply geometric transformations like rotation and reflection to the game board. Multiple isometries can be stacked and combined to create new, more complex transformations.
 
 ## Getting Started
 
